@@ -19,9 +19,14 @@ fn handle_connection(mut stream: TcpStream) {
     stream.read(&mut buffer).unwrap();
 
     let get = b"GET / HTTP/1.1\r\n"; // return a reference to a byte string
+    let sleep = b"GET /sleep HTTP/1.1\r\n";
 
     let (status_line, filename) = if buffer.starts_with(get) {
         ("HTTP/1.1 200 OK", "index.html")
+    } else if (buffer.starts_with(sleep)) {
+        std::thread::sleep(std::time::Duration::from_secs(5));
+
+        ("HTTP/1.1 404 NOT FOUND", "index.html")
     } else {
         ("HTTP/1.1 404 NOT FOUND", "404.html")
     };
